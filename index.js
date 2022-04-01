@@ -66,7 +66,7 @@ function storeStocks(listOfStocks) {
 }
 
 
-let storeFile = "store.csv"
+let storeFile = "test.csv"
 let apiHeaders = [
     [
         "acceptsLanguages",
