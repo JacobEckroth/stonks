@@ -49,16 +49,42 @@ var expectedStocks = 0;
 
 function storeStocks(listOfStocks) {
     for (var i = 0; i < listOfStocks.length; i++) {
-        totalStocks.push(Object.values(listOfStocks[i]));
+        totalStocks.push(listOfStocks[i]);
     }
+    console.log(totalStocks.length);
     if (totalStocks.length === expectedStocks) {
-        console.log("got enough");
-        for (var i = 0; i < listOfStocks.length; i++) {
+        //now we want to create new objects with only the ones we need.
 
-            csv.writeToStream(fs.createWriteStream(path.resolve(__dirname, storeFile), { flags: 'a' }), totalStocks, { headers: false })
-                .on('error', err => console.error(err))
-                .on('finish', () => console.log('Done writing.'));
+        var fixedStocks = [apiHeaders];
+        for (const stock of totalStocks) {
+
+            fixedStocks.push([
+                stock.ask,
+                stock.fiftyDayAverage,
+                stock.fiftyDayAverageChange,
+                stock.fiftyDayAverageChangePercent,
+                stock.longName,
+                stock.postMarketPrice,
+                stock.regularMarketPrice,
+                stock.regularMarketDayHigh,
+                stock.regularMarketDayRange,
+                stock.regularMarketDayLow,
+                stock.regularMarketVolume,
+                stock.regularMarketPreviousClose,
+                stock.shortName,
+                stock.symbol,
+                stock.twoHundredDayAverage,
+                stock.twoHundredDayAverageChange,
+                stock.twoHundredDayAverageChangePercent
+
+            ])
+
         }
+
+        csv.writeToStream(fs.createWriteStream(path.resolve(__dirname, storeFile), { flags: 'a' }), fixedStocks, { headers: false })
+            .on('error', err => console.error(err))
+            .on('finish', () => console.log('Done writing.'));
+
     }
 
 
@@ -66,88 +92,28 @@ function storeStocks(listOfStocks) {
 }
 
 
-let storeFile = "test.csv"
+let storeFile = "store.csv"
 let apiHeaders = [
-    [
-        "acceptsLanguages",
-        "region",
-        "quoteType",
-        "typeDisp",
-        "quoteSourceName",
-        "triggerable",
-        "customPriceAlertConfidence",
-        "currency",
-        "askSize",
-        "fullExchangeName",
-        "financialCurrency",
-        "regularMarketOpen",
-        "averageDailyVolume3Mont",
-        "averageDailyVolume10Day",
-        "fiftyTwoWeekLowChange",
-        "fiftyTwoWeekLowChangePercent",
-        "fiftyTwoWeekRange",
-        "fiftyTwoWeekHighChange",
-        "fiftyTwoWeekHighChangePercent",
-        "fiftyTwoWeekLow",
-        "fiftyTwoWeekHigh",
-        "dividendDate",
-        "earningsTimestamp",
-        "earningsTimestampStart",
-        "earningsTimestampEnd",
-        "trailingAnnualDividendRate",
-        "trailingPE",
-        "trailingAnnualDividendYield",
-        "epsTrailingTwelveMonths",
-        "epsForward",
-        "epsCurrentYear",
-        "priceEpsCurrentYear",
-        "sharesOutstanding",
-        "bookValue",
-        "fiftyDayAverage",
-        "fiftyDayAverageChange",
-        "fiftyDayAverageChangePercent",
-        "twoHundredDayAverage",
-        "twoHundredDayAverageChange",
-        "twoHundredDayAverageChangePercent",
-        "marketCap",
-        "forwardPE",
-        "priceToBook",
-        "sourceInterval",
-        "exchangeDataDelayedBy",
-        "pageViewGrowthWeekly",
-        "averageAnalystRating",
-        "tradeable",
-        "exchange",
-        "shortName",
-        "longName",
-        "messageBoardId",
-        "exchangeTimezoneName",
-        "exchangeTimezoneShortName",
-        "gmtOffSetMilliseconds",
-        "market",
-        "esgPopulated",
-        "firstTradeDateMilliseconds",
-        "priceHint",
-        "postMarketChangePercent",
-        "postMarketTime",
-        "postMarketPrice",
-        "postMarketChange",
-        "regularMarketChange",
-        "regularMarketChangePercent",
-        "regularMarketTime",
-        "regularMarketPrice",
-        "regularMarketDayHigh",
-        "regularMarketDayRange",
-        "regularMarketDayLow",
-        "regularMarketVolume",
-        "regularMarketPreviousClose",
-        "bid",
-        "ask",
-        "bidSize",
-        "marketState",
-        "symbol"
-    ]
+    "ask",
+    "fiftyDayAverage",
+    "fiftyDayAverageChange",
+    "fiftyDayAverageChangePercent",
+    "longName",
+    "postMarketPrice",
+    "regularMarketPrice",
+    "regularMarketDayHigh",
+    "regularMarketDayRange",
+    "regularMarketDayLow",
+    "regularMarketVolume",
+    "regularMarketPreviousClose",
+    "shortName",
+    "symbol",
+    "twoHundredDayAverage",
+    "twoHundredDayAverageChange",
+    "twoHundredDayAverageChangePercent"
+
 ]
+
 
 function readInStocks(fileName) {
     //first we delete the previous csv file
@@ -161,9 +127,6 @@ function readInStocks(fileName) {
 
 
 
-    writeToPath(path.resolve(__dirname, storeFile), apiHeaders)
-        .on('error', err => console.error(err))
-        .on('finish', () => console.log('Done writing.'));
 
     rows = [];
     fs.createReadStream(path.resolve(__dirname, fileName))
@@ -193,6 +156,10 @@ function getStockInfoForManyStocks(tickers) {
             stockRequest += ","
         }
     }
+    if (stockCount != 0) {
+        getStockInfo(stockRequest);
+    }
+
 }
 
 readInStocks('dividends.csv')
