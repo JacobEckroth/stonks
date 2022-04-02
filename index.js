@@ -59,7 +59,6 @@ function storeStocks(listOfStocks) {
         for (const stock of totalStocks) {
 
             fixedStocks.push([
-                stock.ask,
                 stock.fiftyDayAverage,
                 stock.fiftyDayAverageChange,
                 stock.fiftyDayAverageChangePercent,
@@ -94,7 +93,6 @@ function storeStocks(listOfStocks) {
 
 let storeFile = "store.csv"
 let apiHeaders = [
-    "ask",
     "fiftyDayAverage",
     "fiftyDayAverageChange",
     "fiftyDayAverageChangePercent",
